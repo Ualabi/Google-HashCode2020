@@ -13,7 +13,7 @@ Min waiting days    | 5,345,656    |       |         |         |         |
 Max waiting days    | 5,345,656    |       |         |         |         |
 Min number shipped  | 5,345,656    |       |         |         |         |
 Max number shipped  | 5,345,656    |       |         |         |         |
-**Frequencies**            |       |         |         |         
+**Frequencies**     |            |       |       |         |         |
 0                   |            |       |       |         |         |         
 1                   |            |       |       |         |         |         
 2                   |            |       |       |         |         |         
