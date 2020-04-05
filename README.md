@@ -5,10 +5,14 @@ Here are my solutions of Hash Code 2020 Extended Round. I got top 44 with "TnT" 
 
 I used Python because I think Python is easier to understand that other languages and because you code less lines, it is not the fastest language, but its fast enough to pass the time limit in the contests 
 
-First Header | Second Header
------------- | -------------
-Content from cell 1 | Content from cell 2
-Content in the first column | Content in the second column
+Test | Score
+---- | -------------
+A | Content from cell 2
+B | Content in the second column
+C | aaa
+D | aa
+E | aa
+F | aa
 
 Test      Score
 ---------
