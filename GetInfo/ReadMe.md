@@ -8,7 +8,7 @@ Number of days                | 7           | 1,000       | 100,000     | 30,001
 Values of books               | 1 - 6       | 100         | 1 - 600     | 65 - 65     | 1 - 250     | 1 - 800
 Number of books in libraries  | 4 -5        | 1,000       | 10 - 20     | 1 -14       | 2 - 1,000   | 1 - 1,000
 Waiting days                  | 2 -3        | 1 - 20      | 20 - 1,000  | 2           | 1 - 10      | 30 - 300
-Number of Books shipped       |  1-2        | 1           | 210 - 99,998| 1           | 1 - 2       | 5 - 10
+Number of books shipped       |  1-2        | 1           | 210 - 99,998| 1           | 1 - 2       | 5 - 10
 **Frequencies books overlap** |             |             |             |             |             |
 0 *(do not exist in any lib)* | 0           | 0           | 22,340      | 0           | 736         | 575  
 1                             | 3           | 100,000     | 33,392      | 0           | 3,624       | 3,159     
