@@ -1,214 +1,181 @@
-#import copy
-
-def A(recent,bibliotecas,dondeLibros,nd,dia,setlib,valorLibros,pasado,valorFrecuencia,i):
-    #bibliotecas.append([index,NLibros,Espera,Prestar,suma,valortop,myarr,uniq])
-    for x in recent:
-        for y in dondeLibros[x]:
-            if y in bibliotecas and x in bibliotecas[y][6]:
-                bibliotecas[y][7] -= valorFrecuencia[x]
-                bibliotecas[y][6].remove(x)
-                bibliotecas[y][4] -= valorLibros[x]
-                bibliotecas[y][1] -= 1
+#################################################
+# Function that returns the next librarie to take
+#################################################
+def A(recents,libraries,whereBooks,ndays,day,setlib,vBooks,bfreq):
+    for x in recents:
+        for y in whereBooks[x]:
+            if y in libraries and x in libraries[y][5]:
+                libraries[y][5].remove(x)
+                libraries[y][4] -= vBooks[x]
+                libraries[y][1] -= 1
     
-    #aux = {}
+    ID = -1
     m1 = 0
-    m2 = 0
-    m3 = 0
-    for x in bibliotecas:
-        [index,NLibros,Espera,Prestar,suma,valortop,myarr,uniq] = bibliotecas[x]
-        if NLibros and index not in setlib:
-            maxi = min(NLibros,Prestar*(nd-dia))
-            suma = 0
+    for x in libraries:
+        if x not in setlib:
+            [Index,NBooks,Wait,Ship,Amount] = libraries[x][:5]
+            maxi = min(NBooks,1.8*Ship*(ndays-day-Wait))
+            maxi = int(max(1,maxi))
+            Amount = 0
             for y in range(maxi):
-                suma += valorLibros[bibliotecas[index][6][y]]
-            z = suma/(Espera+i)
+                book = libraries[x][5][y]
+                Amount += vBooks[book]/bfreq[book]
+            aux = Amount/(Wait)
+            libraries[x][4] = aux
+            if m1 < aux:
+                ID = Index
+                m1 = aux
 
-            bibliotecas[index][5] = z
-            if m1 < z:
-                m1 = z
-                m2 = NLibros
-                m3 = uniq
-                ID = index
-            elif m1 == z and m2 < NLibros:
-                m2 = NLibros
-                m3 = uniq
-                ID = index
-            elif m2 == NLibros and m3 < uniq:
-                m3 = uniq
-                ID = index
-            #aux[bibliotecas[x][5]] = [bibliotecas[x][0],suma,Espera,Prestar]
-    
-    #print(bibliotecas[ID])
-    
-    count = 0
-    for x in bibliotecas[ID][6]: 
-        for y in dondeLibros[x]:
-            if y in bibliotecas and y != ID and x in bibliotecas[y][6]:
-                bibliotecas[y][7] -= valorFrecuencia[x]
-                bibliotecas[y][6].remove(x)
-                bibliotecas[y][4] -= valorLibros[x]
-                bibliotecas[y][1] -= 1
-        
-        count += 1
-        if count == maxi:
-            break
+    return [ID,libraries]
 
-    #print(ID)
-    return [ID,bibliotecas]
+#################################################
+# Read the in-file
+#################################################
+basedir = __file__
+for x in range(len(basedir)-1,-1,-1):
+    if (basedir[x] == '/') :
+        basedir = basedir[:x+1]
+        break
+indir = basedir + 'TestE.txt'
+print(indir)
 
-def Solution(bibliotecas, valorLibros, valorFrecuencias, dondeLibros, i):
-    ######################
-    # Codigo
-    ######################
-    past, actual = 0, 0
-    flag = True
-    queue = set()
-    tomados = set()
-    recent = []
-    libraries = []
-    setlib = set()
-    mydict = {}
-    check = None
-    total = 0
-
-    for x in range(nd):
-        if flag:
-            if check:
-                queue.add(check)
-                libraries.append(check)
-                setlib.add(check)
-                mydict[check] = []
-            
-            flag = False
-            past = 1
-            
-            [check,bibliotecas] = A(recent,bibliotecas,dondeLibros,nd,x,setlib,valorLibros,check,valorFrecuencia,i)
-            actual = bibliotecas[check][2]
-            recent = []
-        else:
-            if actual == 1:
-                queue.add(check)
-                libraries.append(check)
-                setlib.add(check)
-                mydict[check] = []
-                
-                flag = False
-                past = 1
-                
-                [check,bibliotecas] = A(recent,bibliotecas,dondeLibros,nd,x,setlib,valorLibros,check,valorFrecuencia,i)
-                actual = bibliotecas[check][2]
-                recent = []
-            else:
-                past += 1
-                if past == actual:
-                    flag = True
-        
-        if queue:
-            borrar = []
-            for element in queue:
-                ID = bibliotecas[element][0]
-                Prestar = bibliotecas[element][3]
-                myarr = bibliotecas[element][6]
-                #print(len(myarr),' , ',Prestar,' ; ',end='')
-
-                llevo = 0
-                for voy in myarr:
-                    if voy not in tomados:
-                        total += valorLibros[voy]
-                        mydict[element] += [voy]
-                        tomados.add(voy)
-                        recent.append(voy)
-                        llevo += 1
-                    if llevo == Prestar:
-                        break
-
-                if voy == myarr[-1]:
-                    borrar.append(ID)
-
-            for rr in borrar:
-                queue.remove(rr)
-                del bibliotecas[rr]
-        
-        #if x%1000 == 0:
-        #    print(x,total)
-        #if x%10==0:
-        #    print(x,len(libraries),len(mydict),len(bibliotecas),len(dondeLibros),total,queue,check,Prestar,past,actual)
-            #print(len(dondeLibros))
-
-    print(i,x,total,len(libraries))
-    return[total,mydict,libraries]
-
-##############################
-#Lectura del archivo
-##############################
-archivo = open("C:\\Users\\Xps 9350\\OneDrive\\Google\\Hashcode2020\\5E.txt","r", encoding='utf-8') #Leemos con UTF-8 para que detecte los caracteres especiales
-text = archivo.read()
-archivo.close()
+infile = open(indir,"r", encoding='utf-8')
+text = infile.read()
+infile.close()
 
 text = text.split('\n')
 
 biglist = []
-for renglon in text:
-    if renglon:
-        aux = list (map (int, renglon.split (' ')))
+for row in text:
+    if row:
+        aux = list (map (int, row.split (' ')))
         biglist.append(aux)
 
-[nb,nl,nd] = biglist[0]
-valorLibros = biglist[1]
-valorFrecuencia = []
+[nbooks,nlibs,ndays] = biglist[0]
+vBooks = biglist[1] # Value of the books
 
-dondeLibros = {}
+#################################################
+# Build the dictionary of the libraries
+#################################################
+whereBooks = {}
+libraries = {}
+row = 2
 
-bibliotecas = {}
-count = 2
-
-valortop = 0
-uniq = 0
-
-for index in range(nl):
-    [NLibros,Espera,Prestar] = biglist[count]
-    count += 1
+for index in range(nlibs):
+    [NBooks,Wait,Ship] = biglist[row]
+    row += 1
     
-    libros = biglist[count]
-    count += 1
+    books = biglist[row]
+    row += 1
 
     aux = {}
-    for ID in libros:
-        aux[valorLibros[ID]] = aux.get(valorLibros[ID],[])+[ID]
+    for ID in books:
+        aux[vBooks[ID]] = aux.get(vBooks[ID],[])+[ID]
     
-    suma = 0
-    myarr = []
+    Amount = 0
+    sBooks = [] #Sorted Books
     for x in sorted(aux,reverse=True):
-        myarr += aux[x]
+        sBooks += aux[x]
         for y in aux[x]:
-            dondeLibros[y] = dondeLibros.get(y,[])+[index]
-            suma += valorLibros[y]
+            whereBooks[y] = whereBooks.get(y,[])+[index]
+            Amount += vBooks[y]
     
-    bibliotecas[index] = [index,NLibros,Espera,Prestar,suma,valortop,myarr,uniq]
+    if Wait < 3:
+        libraries[index] = [index,NBooks,Wait,Ship,Amount,sBooks]
 
-aux = {}
-for x in range(nl):
-    for y in bibliotecas[x][6]:
-        aux[y] = aux.get(y,0)+1
+bfreq = {} #Books frequencies
+for x in libraries:
+    for y in libraries[x][5]:
+        bfreq[y] = bfreq.get(y,0)+1
 
-valorFrecuencia = {}
-for x in sorted(aux):
-    valorFrecuencia[x] = 1/aux[x]
+#################################################
+# Simulation of the days
+#################################################
+past, actual = 0, 0 # Count and limit of the waiting days
+setlib  = set() # Set libraries taken, it has O(1) to search in it
+queue   = set() # Queue of libraries where we are taking books
+taken   = set() # Books taken
+tlib    = [] # Libararies taken, it has order
+recents = [] # Books just taken
+mydict  = {} # Dictionary where we write the libraries with the books taken
+flag    = True # The flag indicates if its time to pick up a new librarie
+check   = None # The selected librarie
+total   = 0
 
-for x in range(nl):
-    count = 0
-    for y in bibliotecas[x][6]:
-        count += valorFrecuencia[y]
-    bibliotecas[x][7] = count 
+for day in range(ndays): # Simulation of the days
+    #############################################
+    # Pick up a librarie or count the days
+    #############################################
+    if flag: # We pick up a new librarie and add the last one to the queue
+        if check:
+            queue.add(check)
+            tlib.append(check)
+            setlib.add(check)
+            mydict[check] = []
+        
+        flag = False
+        past = 1
+        
+        [check,libraries] = A(recents,libraries,whereBooks,ndays,day,setlib,vBooks,bfreq)
+        actual = libraries[check][2] if check >= 0 else 10**8
+        recents = []
+    else: # We add 1 to the count of the waiting days
+        if actual > 1: # Count the day
+            past += 1
+            if past == actual:
+                flag = True
+        elif actual == 1: # If the wait was of 1 day we add if to the queue
+            queue.add(check)
+            tlib.append(check)
+            setlib.add(check)
+            mydict[check] = []
+            
+            flag = False
+            past = 1
+            
+            [check,libraries] = A(recents,libraries,whereBooks,ndays,day,setlib,vBooks,bfreq)
+            actual = libraries[check][2] if check >= 0 else 10**8
+            recents = []
 
-[total,mydict,libraries] = Solution(bibliotecas,valorLibros,valorFrecuencia,dondeLibros,2)
+    #############################################
+    # Pick up the books for each librarie
+    #############################################
+    if queue:
+        delete = []
+        for element in queue:
+            [index,NLibros,Wait,Ship,Amount,sBooks] = libraries[element] 
 
-##############################
-#Convertir variables texto
-##############################
+            llevo = 0
+            for x in sBooks:
+                if x not in taken:
+                    recents.append(x)
+                    total += vBooks[x]
+                    mydict[element] += [x]
+                    taken.add(x)
+                    llevo += 1
+                if llevo == Ship:
+                    break
+
+            if len(sBooks) == 0 or x == sBooks[-1]:
+                delete.append(index)
+
+        for rr in delete:
+            if rr in queue:
+                queue.remove(rr)
+            if rr in libraries:
+                del libraries[rr]
+    
+    if day%10==0:
+        print(day,total,len(tlib))
+
+print(" - ",total)
+
+#################################################
+# Write the out-text
+#################################################
 mytext = ''
 mytext += str(len(mydict)) + '\n'
-for x in libraries:
+for x in tlib:
     mytext += str(x) + ' ' + str(len(mydict[x])) + '\n'
     r = ''
     for y in mydict[x]:
@@ -219,6 +186,20 @@ for x in libraries:
     else:
         mytext += '\n'
 
-archivo = open("C:\\Users\\Xps 9350\\OneDrive\\Google\\Hashcode2020\\pruebas.txt","w+", encoding='utf-8') #Escribimos con UTF-8 para escribir los caracteres especiales
-archivo.write(mytext)
-archivo.close()
+#################################################
+# Write the out-file
+#################################################
+stotal = str(total)
+outdir = ''
+while stotal:
+    if len(stotal) > 3:
+        outdir = ','+stotal[-3:] + outdir
+        stotal = stotal[:-3]
+    else:
+        outdir = stotal + outdir
+        stotal = None
+
+outdir = basedir + 'E '+ outdir + '.txt'
+outfile = open(outdir,"w+", encoding='utf-8')
+outfile.write(mytext)
+outfile.close()
