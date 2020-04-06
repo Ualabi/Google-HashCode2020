@@ -1,6 +1,6 @@
-# Information of the Test Cases
+# Information of the data sets
 
-Test                          | A           | B           | C           | D           | E           | F
+Data set                      | A           | B           | C           | D           | E           | F
 ----------------------------- | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- 
 Number of books               | 6           | 100,000     | 100,000     | 78,600      | 100,000     | 100,000
 Number of libraries           | 2           | 100         | 10,000      | 30,000      | 1,000       | 1,000
