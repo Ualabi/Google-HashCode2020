@@ -43,7 +43,10 @@ for xfile in entries:
             row += 1
             
             libraries[index] = [index,NBooks,Wait,Ship,books]
-
+        
+        #################################################
+        # Get the mins and maxs
+        #################################################
         minVL = min(vBooks)
         maxVL = max(vBooks)
 
@@ -77,7 +80,10 @@ for xfile in entries:
         aux2 = {}
         for x in aux:
             aux2[aux[x]] = aux2.get(aux[x],0) + 1
-
+        
+        #################################################
+        # Print the values
+        #################################################
         print("\n\n############################")
         print("File: ",xfile)
         print("There are ",nbooks," books")
