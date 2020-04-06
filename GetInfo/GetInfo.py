@@ -1,99 +1,94 @@
-archivo = open("C:\\Users\\Xps 9350\\OneDrive\\Google\\Pruebas\\C.txt","r", encoding='utf-8') #Leemos con UTF-8 para que detecte los caracteres especiales
-text = archivo.read()
-archivo.close()
+import os
+#################################################
+# Read the in-file
+#################################################
+basedir = __file__
+for x in range(len(basedir)-1,-1,-1):
+    if (basedir[x] == '/') :
+        basedir = basedir[:x+1]
+        break
+entries = os.listdir(basedir)
+print(entries,'\n')
 
-text = text.split('\n')
+for xfile in entries:
+    if xfile[-3:] == 'txt':
+        indir = basedir + xfile
+        infile = open(indir,"r", encoding='utf-8')
+        text = infile.read()
+        infile.close()
 
-biglist = []
-for renglon in text:
-    if renglon:
-        aux = list (map (int, renglon.split (' ')))
-        biglist.append(aux)
+        text = text.split('\n')
 
-[nb,nl,nd] = biglist[0]
-valorLibros = biglist[1]
+        biglist = []
+        for row in text:
+            if row:
+                aux = list (map (int, row.split (' ')))
+                biglist.append(aux)
 
-bibliotecas = []
-count = 2
-valor = 0
-for index in range(nl):
-    [NLibros,Espera,Prestar] = biglist[count]
-    count += 1
-    
-    libros = biglist[count]
-    count += 1
+        #################################################
+        # Build the dictionary of the libraries
+        #################################################
+        [nbooks,nlibs,ndays] = biglist[0]
+        vBooks = biglist[1] # Value of the books
 
-    bibliotecas.append([index,NLibros,Espera,Prestar,libros,valor])
+        libraries = {}
+        order = {}
+        row = 2
 
-minVL = min(valorLibros)
-maxVL = max(valorLibros)
+        for index in range(nlibs):
+            [NBooks,Wait,Ship] = biglist[row]
+            row += 1
+            
+            books = biglist[row]
+            row += 1
+            
+            libraries[index] = [index,NBooks,Wait,Ship,books]
 
-minL = 100000
-maxL = 0
-minE = 100000
-maxE = 0
-minP = 100000
-maxP = 0
-minV = 100000
-maxV = 0
-minR = 100000
-maxR = 0
+        minVL = min(vBooks)
+        maxVL = max(vBooks)
 
+        minL = float('inf')
+        maxL = 0
+        minE = float('inf')
+        maxE = 0
+        minP = float('inf')
+        maxP = 0
 
-tomados = set()
-suma = 0
+        for x in libraries:
+            [index,NBooks,Wait,Ship,books] = libraries[x]
 
-for x in bibliotecas:
-    [index,NLibros,Espera,Prestar,myarr,valor] = x
-    for y in myarr:
-        valor += valorLibros[y]
-        if y not in tomados:
-            tomados.add(y)
-            suma += valorLibros[y]
-    x[5] = valor
+            minL = min(minL,NBooks)
+            maxL = max(maxL,NBooks)
 
-    minL = min(minL,NLibros)
-    maxL = max(maxL,NLibros)
+            minE = min(minE,Wait)
+            maxE = max(maxE,Wait)
+            
+            minP = min(minP,Ship)
+            maxP = max(maxP,Ship)
 
-    minE = min(minE,Espera)
-    maxE = max(maxE,Espera)
-    
-    minP = min(minP,Prestar)
-    maxP = max(maxP,Prestar)
+        aux = {}
+        for x in range(nbooks):
+            aux[x] = 0
 
-    minV = min(minV, valor)
-    maxV = max(maxV, valor)
+        for x in libraries:
+            for y in libraries[x][4]:
+                aux[y] += 1
 
-    ratio = valor/(Espera+NLibros/Prestar)
-    minR = min(minR, ratio)
-    maxR = max(maxR, ratio)
+        aux2 = {}
+        for x in aux:
+            aux2[aux[x]] = aux2.get(aux[x],0) + 1
 
-aux = {}
-for x in range(nb):
-    aux[x] = 0
+        print("\n\n############################")
+        print("File: ",xfile)
+        print("There are ",nbooks," books")
+        print("There are ",nlibs," libraries")
+        print("There are ",ndays," days\n")
 
-for x in range(nl):
-    for y in bibliotecas[x][4]:
-        aux[y] += 1
+        print("min/max value of books:  ",minVL," / ",maxVL)
+        print("min/max number of books: ",minL," / ",maxL)
+        print("min/max waiting days:    ",minE," / ",maxE)
+        print("min/max books shipped:   ",minP," / ",maxP,"\n")
 
-aux2 = {}
-for x in aux:
-    aux2[aux[x]] = aux2.get(aux[x],0) + 1
-
-print("#Hay ",nb," libros")
-print("#Hay ",nl," librerias")
-print("#Tienes ",nd," días\n")
-
-print("#Lo máximo alcanzable es ",suma,"\n")
-
-print("#min/max valor de libros: ",minVL," / ",maxVL)
-print("#min/max número de libros: ",minL," / ",maxL)
-print("#min/max espera: ",minE," / ",maxE)
-print("#min/max prestar: ",minP," / ",maxP,"\n")
-
-print("#min/max valor de librerias: ",minV," / ",maxV,)
-print("#min/max ratio: ",minR," / ",maxR,"\n")
-
-print("Frecuencias:")
-for x in sorted(aux2):
-    print(x,' ',aux2[x])
+        print("Frequencies of books overlap:")
+        for x in sorted(aux2):
+            print(x,' ',aux2[x])
